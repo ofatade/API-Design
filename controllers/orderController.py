@@ -18,6 +18,8 @@ def save():
 
 
 def find_all():
-    all_orders = orderService.find_all()
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 2, type=int)
+    all_orders = orderService.find_all(page, per_page)
 
     return orders_schema.jsonify(all_orders), 200
