@@ -1,8 +1,9 @@
 from flask import request, jsonify
-from models.schemas.customerSchema import customer_schema, customers_schema
+from models.schemas.customerSchema import customer_schema, customers_schema, customer_login
 from services import customerService
 from marshmallow import ValidationError
 from cache import cache
+from utils.util import token_required
 
 
 def save(): #name the controller the same as the service it recruites
@@ -17,8 +18,28 @@ def save(): #name the controller the same as the service it recruites
     return customer_schema.jsonify(customer), 201 #send them the customer object with a 201 successful creation status
 
 
-@cache.cached(timeout=120)
+#@cache.cached(timeout=120)
+@token_required
 def find_all():
     all_customers = customerService.find_all()
 
     return customers_schema.jsonify(all_customers), 200
+
+
+def login():
+    try: 
+        credentials = customer_login.load(request.json)
+    except ValidationError as e:
+        return jsonify(e.messages), 400 #invalid credential payload
+    
+    token = customerService.login(credentials)
+
+    if token:
+        response = {
+            "status": "success",
+            "message": "successfully logged in",
+            "token": token
+        }
+        return jsonify(response), 200
+    else:
+        return jsonify({"status": "error", "message": "invalid username or password"}), 404
