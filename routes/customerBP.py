@@ -1,5 +1,5 @@
 from flask import Blueprint
-from controllers.customerController import save, find_all, login
+from controllers.customerController import save, find_all, login, add_to_cart, view_cart, remove_item_from_cart, empty_cart, place_order
 
 
 customer_blueprint = Blueprint('customer_bp', __name__)
@@ -9,3 +9,9 @@ customer_blueprint = Blueprint('customer_bp', __name__)
 customer_blueprint.route('/', methods=['POST'])(save) #triggers the save function on POST request to /customers
 customer_blueprint.route('/', methods=['GET'])(find_all)
 customer_blueprint.route('/login', methods=["POST"])(login)
+customer_blueprint.route('/cart/add', methods=['POST'])(add_to_cart)
+customer_blueprint.route('/cart/view', methods=['GET'])(view_cart)
+customer_blueprint.route('/cart/remove', methods=['POST'])(remove_item_from_cart)
+customer_blueprint.route('/cart/empty', methods=['POST'])(empty_cart)
+customer_blueprint.route('/order/place', methods=['POST'])(place_order)
+

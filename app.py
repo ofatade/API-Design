@@ -9,6 +9,9 @@ from cache import cache
 from models.customer import Customer
 from models.product import Product
 from models.order import Order
+from models.customerCart import customer_cart
+
+
 
 #blueprints
 from routes.customerBP import customer_blueprint
