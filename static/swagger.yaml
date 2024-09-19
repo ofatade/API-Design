@@ -68,7 +68,7 @@ paths:
   # Create Customer
   /customers/create:
     post:
-      tags: 
+      tags:
         - Customer
       summary: "Create a new customer"
       description: "Endpoint to create a new customer"
@@ -81,10 +81,23 @@ paths:
             $ref: "#/definitions/CreateCustomerPayload"
       responses:
         201:
-          description: "Customer created successfully"
+          description: "Customer successfully created"
           schema:
             $ref: "#/definitions/CustomerResponse"
-  
+
+  # List Products
+  /products:
+    get:
+      tags:
+        - Product
+      summary: "List all products"
+      description: "Endpoint to retrieve all products"
+      responses:
+        200:
+          description: "Successfully retrieved products"
+          schema:
+            $ref: "#/definitions/ProductListResponse"
+
   # Create Product
   /products/create:
     post:
@@ -101,253 +114,239 @@ paths:
             $ref: "#/definitions/CreateProductPayload"
       responses:
         201:
-          description: "Product created successfully"
+          description: "Product successfully created"
           schema:
             $ref: "#/definitions/ProductResponse"
 
-  # List Products
-  /products:
-    get:
-      tags:
-        - Product
-      summary: "List all products"
-      description: "Retrieve a list of all products"
-      responses:
-        200:
-          description: "Successfully retrieved all products"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/ProductResponse"
-
-  # Retrieve Order
-  /orders/{order_id}:
-    get:
-      tags:
-        - Order
-      summary: "Retrieve a specific order"
-      description: "Retrieve details of a specific order by ID"
-      parameters:
-        - in: "path"
-          name: "order_id"
-          required: true
-          type: "integer"
-          description: "ID of the order to retrieve"
-      responses:
-        200:
-          description: "Order retrieved successfully"
-          schema:
-            $ref: "#/definitions/OrderResponse"
-
   # Add to Cart
-  /cart:
+  /customers/cart/add:
     post:
       tags:
         - Cart
-      summary: "Add items to cart"
-      description: "Endpoint to add items to the shopping cart"
+      summary: "Add product to cart"
+      description: "Endpoint to add products to the customer's cart"
       parameters:
         - in: "body"
           name: "body"
-          description: "Product details and quantity"
+          description: "Details of product to add to the cart"
           required: true
           schema:
             $ref: "#/definitions/AddToCartPayload"
       responses:
         200:
-          description: "Item added to cart successfully"
+          description: "Product added to cart"
           schema:
             $ref: "#/definitions/CartResponse"
 
   # View Cart
-  /cart/view:
+  /customers/cart/view?customer_id=1:
     get:
       tags:
         - Cart
-      summary: "View items in the cart"
-      description: "Endpoint to view all items in the shopping cart"
+      summary: "View the customer's cart"
+      description: "Endpoint to retrieve the products in the customer's cart"
+      security:
+        - bearerAuth: []
       responses:
         200:
-          description: "Cart items retrieved successfully"
+          description: "Cart retrieved successfully"
           schema:
-            $ref: "#/definitions/CartResponse"
+            $ref: "#/definitions/ViewCartResponse"
 
   # Remove from Cart
-  /cart/{product_id}:
-    delete:
-      tags:
-        - Cart
-      summary: "Remove an item from the cart"
-      description: "Endpoint to remove an item from the cart by product ID"
-      parameters:
-        - in: "path"
-          name: "product_id"
-          required: true
-          type: "integer"
-          description: "ID of the product to remove"
-      responses:
-        200:
-          description: "Item removed from cart successfully"
-
-  # Empty Cart
-  /cart/empty:
+  /customers/cart/remove:
     post:
       tags:
         - Cart
-      summary: "Empty the cart"
-      description: "Endpoint to empty all items from the cart"
+      summary: "Remove an item from the cart"
+      description: "Endpoint to remove a specific product from the customer's cart"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Details of the product to remove from the cart"
+          required: true
+          schema:
+            $ref: "#/definitions/RemoveFromCartPayload"
       responses:
         200:
-          description: "Cart emptied successfully"
+          description: "Item successfully removed from the cart"
+          schema:
+            $ref: "#/definitions/CartResponse"
+
+  # Empty Cart
+  /customers/cart/empty:
+    post:
+      tags:
+        - Cart
+      summary: "Empty the customer's cart"
+      description: "Endpoint to remove all products from the customer's cart"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "ID of the customer to empty cart"
+          required: true
+          schema:
+            $ref: "#/definitions/EmptyCartPayload"
+      responses:
+        200:
+          description: "Cart successfully emptied"
+          schema:
+            $ref: "#/definitions/CartResponse"
 
   # Place Order
-  /orders:
+  /customers/order/place:
     post:
       tags:
         - Order
       summary: "Place an order"
-      description: "Endpoint to place an order using the items in the cart"
+      description: "Endpoint to place an order based on the items in the cart"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Details for placing the order"
+          required: true
+          schema:
+            $ref: "#/definitions/PlaceOrderPayload"
       responses:
         201:
-          description: "Order placed successfully"
+          description: "Order successfully placed"
           schema:
             $ref: "#/definitions/OrderResponse"
 
 # Payload and Responses
-definitions: 
-  # Login Definitions
-  LoginPayload:
-    type: "object"
-    properties: 
-      email:
-        type: "string"
-        description: "Email"
-      password:
-        type: "string"
-        description: "Password"
-    required:
-      - "email"
-      - "password"
-
-  LoginResponse:
-    type: "object"
-    properties:
-      token:
-        type: "string"
-        description: "Authentication token on successful login"
-      message:
-        type: "string"
-        description: "Message indicating success or failure"
-      status:
-        type: "string"
-        description: "Status of operation"
-    required:
-      - "message"
-      - "status"
-
-  # Create Customer Payload
+definitions:
   CreateCustomerPayload:
     type: "object"
     properties:
       name:
         type: "string"
-        description: "Customer name"
       email:
         type: "string"
-        description: "Customer email"
-      password:
-        type: "string"
-        description: "Customer password"
       phone:
         type: "string"
-        description: "Customer phone"
       username:
         type: "string"
-        description: "Customer username"
+      password:
+        type: "string"
     required:
-      - "name"
-      - "email"
-      - "password"
-      - "username"
+      - name
+      - email
+      - phone
+      - username
+      - password
 
   CustomerResponse:
     type: "object"
     properties:
       id:
         type: "integer"
-        description: "Customer ID"
       name:
         type: "string"
-        description: "Customer name"
       email:
         type: "string"
-        description: "Customer email"
+      phone:
+        type: "string"
+      username:
+        type: "string"
 
-  # Create Product Payload
   CreateProductPayload:
     type: "object"
     properties:
       name:
         type: "string"
-        description: "Product name"
       price:
         type: "number"
-        format: "float"
-        description: "Product price"
     required:
-      - "name"
-      - "price"
+      - name
+      - price
 
   ProductResponse:
     type: "object"
     properties:
       id:
         type: "integer"
-        description: "Product ID"
       name:
         type: "string"
-        description: "Product name"
       price:
         type: "number"
-        format: "float"
-        description: "Product price"
 
-  # Order Response
+  ProductListResponse:
+    type: "array"
+    items:
+      $ref: "#/definitions/ProductResponse"
+
+  AddToCartPayload:
+    type: "object"
+    properties:
+      customer_id:
+        type: "integer"
+      product_id:
+        type: "integer"
+    required:
+      - customer_id
+      - product_id
+
+  RemoveFromCartPayload:
+    type: "object"
+    properties:
+      customer_id:
+        type: "integer"
+      product_id:
+        type: "integer"
+    required:
+      - customer_id
+      - product_id
+
+  CartResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+      status:
+        type: "string"
+
+  EmptyCartPayload:
+    type: "object"
+    properties:
+      customer_id:
+        type: "integer"
+    required:
+      - customer_id
+
+  EmptyCartResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+      status:
+        type: "string"
+
+  ViewCartResponse:
+    type: "object"
+    properties:
+      customer_id:
+        type: "integer"
+      products:
+        type: "array"
+        items:
+          $ref: "#/definitions/ProductResponse"
+
+  PlaceOrderPayload:
+    type: "object"
+    properties:
+      customer_id:
+        type: "integer"
+    required:
+      - customer_id
+
   OrderResponse:
     type: "object"
     properties:
       id:
         type: "integer"
-        description: "Order ID"
-      order_date:
-        type: "string"
-        format: "date-time"
-        description: "Date of the order"
       customer_id:
         type: "integer"
-        description: "ID of the customer who placed the order"
-
-  # Add to Cart Payload
-  AddToCartPayload:
-    type: "object"
-    properties:
-      product_id:
+      status:
         type: "integer"
-        description: "Product ID"
-      customer_id:
-        type: "integer"
-        description: "Customer ID"
-    required:
-      - "product_id"
-      - "customer_id"
-
-  CartResponse:
-    type: "object"
-    properties:
-      customer_id:
-        type: "integer"
-        description: "ID of the customer"
-      products:
-        type: "array"
-        items:
-          $ref: "#/definitions/ProductResponse"
+      total_price:
+        type: "number"

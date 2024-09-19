@@ -6,7 +6,7 @@ customer_blueprint = Blueprint('customer_bp', __name__)
 
 #url_prefix for this blueprint is /customers
 
-customer_blueprint.route('/', methods=['POST'])(save) #triggers the save function on POST request to /customers
+customer_blueprint.route('/create', methods=['POST'])(save) #triggers the save function on POST request to /customers
 customer_blueprint.route('/', methods=['GET'])(find_all)
 customer_blueprint.route('/login', methods=["POST"])(login)
 customer_blueprint.route('/cart/add', methods=['POST'])(add_to_cart)
