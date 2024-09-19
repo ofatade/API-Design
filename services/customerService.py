@@ -146,5 +146,5 @@ def place_order(customer_id):
     # Commit the changes to the database
     db.session.commit()
 
-    return {"message": "Order created and cart emptied"}, 200
+    return {"message": "Order created your cart is empty"}, 200
 

@@ -18,11 +18,6 @@ def save(token_id):
     else:      
         return jsonify({"message": "You can't order things for other users... you fraud!"}), 401
 
-    
-
-
-
-
 def find_all():
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 2, type=int)

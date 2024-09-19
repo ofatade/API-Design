@@ -1,7 +1,7 @@
 from . import ma
 from marshmallow import fields
 
-#incoming order data
+#incoming customer_cart data
 '''
 {
     "customer_id": int,
@@ -18,5 +18,5 @@ class Customer_CartSchema(ma.Schema):
     class Meta:
         fields = ("id", "customer_id", "product_ids", "products") #all fields that could be coming in and going out when validating data
 
-customer_cart_schema = Customer_CartSchema() #instantiate a single order schema
+customer_cart_schema = Customer_CartSchema() #instantiate a single customer_cart schema
 customer_carts_schema_schema = Customer_CartSchema(many=True)
